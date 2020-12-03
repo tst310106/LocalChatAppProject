@@ -10,6 +10,7 @@ class App extends Component {
   // ≪SendMessageFormコンポーネント≫
   // ≪MessageListコンポーネント≫
   // =========================================
+  // ※上記の「簡易チャット」は、タイトル文字を表す。
   render() {
   };
 }

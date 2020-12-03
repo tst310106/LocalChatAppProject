@@ -15,11 +15,12 @@ class MessageList extends Component {
     }
 
     // リストで表示するメッセージの情報を、<div>～</div>の形で返却する。
-    // メッセージの情報としては、reduxのstate中の以下の3つの値を用いる。
+    // メッセージの情報としては、reduxのstoreのstate中に保管されている以下の3つの値を用いる。
     // 　１．送信者の名前の文字列（1～10文字）※inputタグの設定で入力チェックを行う。
     // 　２．メッセージの内容の文字列（1～255文字）※inputタグの設定で入力チェックを行う。
     // 　３．メッセージの送信日時の文字列（YYYY-MM-DD HH:mm:ss）
-    // 上記の3つの値を、Messageコンポーネントに渡すことで、メッセージをリスト化して表示する。
+    // 上記の3つの値を、Messageコンポーネントの属性として設定することで、メッセージを表示する。
+    // また、ループ処理によって複数のMessageコンポーネントを作ることで、メッセージをリスト化して表示する。
     // Messageコンポーネントを作る際のkey値の設定は、メッセージ同士で重複しないように行う。
     // styleについてはMessageList.cssに従う。
     render() {
@@ -27,4 +28,6 @@ class MessageList extends Component {
     }
 }
 
-// reduxのstoreの値を用いるために、connectした状態でエクスポートする。
+// reduxのstoreのstateの値を、このコンポーネント内で取り出せるように、storeと接続を行う。
+// （storeと接続することで、コンポーネント内でstore中のstateをthis.props.の形で取り出せる。）
+// （また、storeのstateの値が変更された場合、stateの値を用いている箇所は再レンダリングされる。）
