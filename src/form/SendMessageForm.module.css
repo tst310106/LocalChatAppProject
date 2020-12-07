@@ -1,0 +1,36 @@
+/*renderする<div>タグ内で行うことを以下に記載*/
+/*１．入力フォームや送信ボタンの配置位置は、段ごとに上下方向に中央寄せする。*/
+/*２．送信ボタンには、入力フォーム枠の色よりも薄めの背景色を設定する。*/
+
+.inputName {
+    border:solid 1px navy; 
+    width: 180px;
+    height: 40px;
+    font-size: 15px;
+    margin: 10px;
+    font-family: sans-serif;
+}
+
+.inputContent {
+    border:solid 1px navy; 
+    display: inline-block;
+    resize: none;
+    width: 300px;
+    height: 40px;
+    font-size: 15px;
+    vertical-align: middle;
+    margin: 10px;
+    font-family: sans-serif;
+}
+
+.sendButton {
+    border:solid 1px navy; 
+    background-color: rgb(204, 204, 241);
+    width: 70px;
+    height: 40px;
+    font-size: 15px;
+    display: inline-block;
+    vertical-align: middle;
+    margin: 10px;
+    font-family: sans-serif;
+}
