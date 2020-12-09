@@ -4,7 +4,9 @@
 
 /*メッセージリストの<table>を囲む<div>のブロックに対する設定*/
 .listBlock {
-    width: 90vw;
+    width: calc(100vw - 20px);
+    /*ブロックの大きさはウィンドウの幅の限界まで近づける。
+    ※　widthの計算時に20pxだけ減算しているのは、ブロックの左右に10pxのmarginを入れているためである。*/
     min-width: 300px;
     height: calc(97vh - 220px);
     /*220pxは【タイトル文字～送信フォーム】部分の高さを表す。
@@ -18,5 +20,4 @@
 /*メッセージリストの<table>のための設定*/
 .list {
     border-collapse: collapse;
-    width: 85vw;
 }
