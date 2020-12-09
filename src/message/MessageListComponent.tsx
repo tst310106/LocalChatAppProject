@@ -19,9 +19,6 @@ class MessageListComponent extends React.Component<MessageList> {
     // 　１．ローカルストレージから、現在の最新のメッセージリストのデータを取得する。
     // 　２．現在表示しているメッセージリストの更新日と、最新のメッセージリストの更新日を比較し、
     // 　　一致していなければメッセージリストの表示の更新を行う。（レデューサーにアクションを送信する。）
-    // this.state = {
-    //     updateTime: ""
-    // };
     setInterval(() => {
       const latestMessageList = getLatestMessageListFromLocalStorage();
       if (latestMessageList.updateTime !== this.props.updateTime) {

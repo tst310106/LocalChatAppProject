@@ -7,13 +7,12 @@
 /*メッセージの行に対する設定*/
 .messageRow {
     border:solid 1px navy;
+    width: 100%;
 }
 
 /*メッセージの【送信者：送信内容】部分に対する設定*/
 .messageContent {
     border: none;
-    width: calc(100vw - 20px - 200px);
-    /*幅の設定を【全体画面幅 - メッセージリストのブロックの左右のmargin - メッセージの【送信日時】の幅】にする*/
     min-width: 300px; /*伸び縮みする際の幅の下限値を設定*/
     font-size: 16px;
     font-family: sans-serif;

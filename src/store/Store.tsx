@@ -29,8 +29,6 @@ export function getLatestMessageListFromLocalStorage(): MessageList {
 
   // 取得したデータを、関数の戻り値の型に変換した上で、返却する。
   if (typeof localStorageData === "string") {
-    // const latestMessageList: MessageList = JSON.parse(localStorageData);
-    // return latestMessageList;
     return JSON.parse(localStorageData);
 
 　// ローカルストレージのデータが存在しない場合は、空のメッセージリストを生成し返却する。
