@@ -4,7 +4,7 @@ import Store, {
   getLatestMessageListFromLocalStorage,
   MessageList,
   Message,
-  reloadList,
+  createReloadListAction,
 } from "../store/Store";
 import { connect } from "react-redux";
 import MessageComponent from "./MessageComponent";
@@ -23,9 +23,9 @@ class MessageListComponent extends React.Component<MessageList> {
     //     updateTime: ""
     // };
     setInterval(() => {
-      let latestMessageList = getLatestMessageListFromLocalStorage();
+      const latestMessageList = getLatestMessageListFromLocalStorage();
       if (latestMessageList.updateTime !== this.props.updateTime) {
-        Store.dispatch(reloadList());
+        Store.dispatch(createReloadListAction());
       }
     }, 1000);
   }
@@ -36,12 +36,12 @@ class MessageListComponent extends React.Component<MessageList> {
   // 　２．メッセージの内容の文字列（1～255文字）※inputタグの設定で入力チェックを行う。
   // 　３．メッセージの送信日時の文字列（YYYY-MM-DD HH:mm:ss）
   // 上記の3つの値を、Messageコンポーネントの属性として設定することで、メッセージを表示する。
-  // また、ループ処理によって複数のMessageコンポーネントを作ることで、メッセージをリスト化して表示する。
+  // また、配列のmap()メソッドを用いて複数のMessageコンポーネントを作ることで、メッセージをリスト化して表示する。
   // Messageコンポーネントを作る際のkey値の設定は、メッセージ同士で重複しないように行う。
   // styleについてはMessageList.module.cssに従う。
   render() {
-    let stateMessageList = this.props.messageList;
-    let mapMessages = stateMessageList.map((value: Message) => (
+    const stateMessageList = this.props.messageList;
+    const mapMessages = stateMessageList.map((value: Message) => (
       <MessageComponent
         key={value.name + value.date}
         name={value.name}

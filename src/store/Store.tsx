@@ -25,20 +25,19 @@ const MESSAGE_LIST_KEY = "MessageList";
 // 　　　　　空のメッセージリスト
 export function getLatestMessageListFromLocalStorage(): MessageList {
   // ローカルストレージ中の最新のメッセージリストの値を取得する。
-  let localStorageData = localStorage.getItem(MESSAGE_LIST_KEY);
+  const localStorageData = localStorage.getItem(MESSAGE_LIST_KEY);
 
   // 取得したデータを、関数の戻り値の型に変換した上で、返却する。
   if (typeof localStorageData === "string") {
-    let latestMessageList: MessageList = JSON.parse(localStorageData);
+    const latestMessageList: MessageList = JSON.parse(localStorageData);
     return latestMessageList;
 
 　// ローカルストレージのデータが存在しない場合は、空のメッセージリストを生成し返却する。
   } else {
-    let latestMessageList: MessageList = {
+    return {
       messageList: [],
       updateTime: "",
     };
-    return latestMessageList;
   }
 }
 
@@ -88,10 +87,10 @@ export function chatReducer(
 // 戻り値：新たにstoreに保管するstate
 function sendMessageReduce(action: SendMessageAction): MessageList {
   // getLatestMessageListFromLocalStorage()によって、現在の最新のメッセージリストのデータを取得する。
-  let latestMessageList = getLatestMessageListFromLocalStorage();
+  const latestMessageList = getLatestMessageListFromLocalStorage();
 
   // 第2引数actionから、新しくメッセージリストに新しく追加するMessageを取り出す。
-  let newMessage = action.message;
+  const newMessage = action.message;
 
   // 最新のメッセージリストのデータの先頭に、新しく追加するMessageの情報を挿入する。
   latestMessageList.messageList.unshift(newMessage);
@@ -121,15 +120,13 @@ type SendMessageAction = {
 // 送信されたメッセージを表示するためのアクションを生成する。
 // 第1引数：送信されたメッセージの情報
 // 戻り値：第一引数を元に生成されたアクション
-export function sendMessage(message: Message): SendMessageAction {
+export function createSendMessageAction(message: Message): SendMessageAction {
   // SendMessageAction型の変数を用意する。
   // typeプロパティに"SEND", messageObjプロパティに第1引数を代入して、返却する。
-  let createdAction: SendMessageAction = {
+  return {
     type: "SEND",
-    message: message,
+    message: message
   };
-
-  return createdAction;
 }
 
 // メッセージのリストの更新時のディスパッチ処理でストアに送信するアクションの型を宣言
@@ -139,14 +136,12 @@ type ReloadListAction = {
 
 // メッセージのリストを更新するためのアクションを生成する。
 // 戻り値：生成されたアクション
-export function reloadList(): ReloadListAction {
+export function createReloadListAction(): ReloadListAction {
   // ReloadListAction型の変数を用意する。
   // typeプロパティに"RELOAD"を代入して、返却する。
-  let createdAction: ReloadListAction = {
+  return {
     type: "RELOAD",
   };
-
-  return createdAction;
 }
 
 // レデューサーchatReducerを用いて、storeを作成する。

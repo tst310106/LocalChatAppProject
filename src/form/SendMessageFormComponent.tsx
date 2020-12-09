@@ -1,6 +1,6 @@
 // 送信するメッセージの情報を入力するためのフォームを表示する。
 import * as React from "react";
-import Store, { sendMessage, Message } from "../store/Store";
+import Store, { createSendMessageAction, Message } from "../store/Store";
 import * as styles from "./SendMessageForm.module.css";
 
 export default class SendMessageFormComponent extends React.Component<{}, Message> {
@@ -42,8 +42,8 @@ export default class SendMessageFormComponent extends React.Component<{}, Messag
     e.preventDefault();
     // 現在の日時の文字列（YYYY-MM-DD HH:mm:ss）を生成する。
     // 月, 日, 時, 分, 秒が1桁だった場合は、0で穴埋めを行う。
-    let nowDate = new Date();
-    let nowDateString =
+    const nowDate = new Date();
+    const nowDateString =
       nowDate.getFullYear() + "-" + // 年
       ("0" + (nowDate.getMonth() + 1)).slice(-2) + "-" + // 月
       ("0" + nowDate.getDate()).slice(-2) + " " + // 日
@@ -52,16 +52,13 @@ export default class SendMessageFormComponent extends React.Component<{}, Messag
       ("0" + nowDate.getSeconds()).slice(-2); // 秒
 
     // フォームから入力された【送信者名】【メッセージ内容】の情報を取得する。
-    let inputName = this.state.name;
-    let inputContent = this.state.content;
-
     // 【送信者名】【メッセージ内容】【日時】の情報を用いて、メッセージリストに新しいメッセージを追加する。（レデューサーにアクションを送信する。）
-    let newMessage: Message = {
-      name: inputName,
-      content: inputContent,
+    const newMessage: Message = {
+      name: this.state.name,
+      content: this.state.content,
       date: nowDateString,
     };
-    Store.dispatch(sendMessage(newMessage));
+    Store.dispatch(createSendMessageAction(newMessage));
 
     // コンポーネントのstate中の値を、初期値に戻す。
     this.setState({
