@@ -5,6 +5,11 @@ import * as styles from "./SendMessageForm.module.css";
 
 export default class SendMessageFormComponent extends React.Component<{},Message> {
 
+  // 名前フォームの可能最大文字数
+  static readonly MAX_NAME_CHAR_COUNT = 10;
+  // メッセージ内容フォームの可能最大文字数
+  static readonly MAX_CONTENT_CHAR_COUNT = 255;
+
   // 入力された全角文字が「変換中」の場合はtrue　「変換が完了している」場合はfalse
   isComposing: boolean = false;
 
@@ -30,64 +35,62 @@ export default class SendMessageFormComponent extends React.Component<{},Message
   // 名前フォームの入力値が確定された場合に、入力値を文字数制限分だけ切り取った上で、state中のname値を書き換える。
   doChangeName(e: any) {
 
-    let settingName: string = e.target.value; // 最終的にsetState()でname値に格納する値
+    let inputtedName: string = e.target.value; // 最終的にsetState()でname値に格納する値
 
     if (this.isComposing === false) { // 半角文字の入力時　及び　全角文字の変換完了時　に実施される処理
 
       // サロゲートペアの文字を考慮した上で、入力値を1文字ずつ配列に格納する。
-      const inputNameArray: string[] = Array.from(settingName);
-      // 名前フォームの可能最大文字数
-      const MAX_CHAR_COUNT = 10;
+      const inputNameArray: string[] = Array.from(inputtedName);
 
       // 入力値の文字数が可能最大文字数を上回った場合、上回った部分の文字列は無くす。
-      if (inputNameArray.length > MAX_CHAR_COUNT) {
+      if (inputNameArray.length > SendMessageFormComponent.MAX_NAME_CHAR_COUNT) {
 
         // 後にsubstring()で特定部分の文字列の切り取りを行うため、上回った部分の文字列のlengthをカウントする。
         // ※通常の文字は「1」とカウント、サロゲートペアは「2」とカウント
         let overCharLength = 0;
-        for (let i_name_array = MAX_CHAR_COUNT; i_name_array < inputNameArray.length; i_name_array++) {
+        for (let i_name_array = SendMessageFormComponent.MAX_NAME_CHAR_COUNT; 
+          i_name_array < inputNameArray.length; i_name_array++) {
           overCharLength = overCharLength + inputNameArray[i_name_array].length;
         }
 
         // 可能最大文字数の分だけ、文字列を切り取る。
-        settingName = settingName.substring(0, (settingName.length - overCharLength));
+        inputtedName = inputtedName.substring(0, (inputtedName.length - overCharLength));
       }
     }
 
     this.setState({
-        name: settingName,
+        name: inputtedName,
     });
   }
 
   // メッセージ内容フォームの入力値が確定された場合に、入力値を文字数制限分だけ切り取った上で、state中のcontent値を書き換える。
   doChangeContent(e: any) {
     
-    let settingContent: string = e.target.value; // 最終的にsetState()でcontent値に格納する値
+    let inputtedContent: string = e.target.value; // 最終的にsetState()でcontent値に格納する値
 
     if (this.isComposing === false) { // 半角文字の入力時　及び　全角文字の変換完了時　に実施される処理
 
       // サロゲートペアの文字を考慮した上で、入力値を1文字ずつ配列に格納する。
-      const inputContentArray: string[] = Array.from(settingContent);
-      // メッセージ内容フォームの可能最大文字数
-      const MAX_CHAR_COUNT = 255;
+      const inputContentArray: string[] = Array.from(inputtedContent);
 
       // 入力値の文字数が可能最大文字数を上回った場合、上回った部分の文字列は無くす。
-      if (inputContentArray.length > MAX_CHAR_COUNT) {
+      if (inputContentArray.length > SendMessageFormComponent.MAX_CONTENT_CHAR_COUNT) {
 
         // 後にsubstring()で特定部分の文字列の切り取りを行うため、上回った部分の文字列のlengthをカウントする。
         // ※通常の文字は「1」とカウント、サロゲートペアは「2」とカウント
         let overCharLength = 0;
-        for (let i_content_array = MAX_CHAR_COUNT; i_content_array < inputContentArray.length; i_content_array++) {
+        for (let i_content_array = SendMessageFormComponent.MAX_CONTENT_CHAR_COUNT; 
+          i_content_array < inputContentArray.length; i_content_array++) {
           overCharLength = overCharLength + inputContentArray[i_content_array].length;
         }
 
         // 可能最大文字数の分だけ、文字列を切り取る。
-        settingContent = settingContent.substring(0, (settingContent.length - overCharLength));
+        inputtedContent = inputtedContent.substring(0, (inputtedContent.length - overCharLength));
       }
     }
 
     this.setState({
-        content: settingContent,
+        content: inputtedContent,
     });
   }
 
