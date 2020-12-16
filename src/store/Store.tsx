@@ -21,23 +21,63 @@ const MESSAGE_LIST_KEY = "MessageList";
 // 戻り値：以下のように、条件によって異なる。
 // 　　　　◆ローカルストレージ中の最新のメッセージリストが存在する場合
 // 　　　　　最新のメッセージリスト
-// 　　　　◆存在しない場合
+// 　　　　◆異常なメッセージリストのデータが存在する場合　及び　メッセージリストのデータが存在しない場合
 // 　　　　　空のメッセージリスト
 export function getLatestMessageListFromLocalStorage(): MessageList {
   // ローカルストレージ中の最新のメッセージリストの値を取得する。
   const localStorageData = localStorage.getItem(MESSAGE_LIST_KEY);
 
-  // 取得したデータを、関数の戻り値の型に変換した上で、返却する。
-  if (typeof localStorageData === "string") {
-    return JSON.parse(localStorageData);
-
-　// ローカルストレージのデータが存在しない場合は、空のメッセージリストを生成し返却する。
-  } else {
-    return {
-      messageList: [],
-      updateTime: "",
-    };
+  // 以下の【１】～【３】のように、ローカルストレージから正しいデータ型のデータが取得できなかった場合は、
+  // 空のメッセージリストemptyMessageListを返却する。
+  const emptyMessageList: MessageList = {
+    messageList: [],
+    updateTime: "",
+  };
+  // 【１】ローカルストレージにデータが存在しない。
+  if (typeof localStorageData !== "string") {
+    return emptyMessageList;
   }
+  // 【２】取得したデータのオブジェクトのプロパティが、MessageList型のプロパティと一致しない。
+  const parsedLocalStorageData: MessageList = JSON.parse(localStorageData);
+  if (parsedLocalStorageData.hasOwnProperty("messageList") === false) {
+    return emptyMessageList;
+  }
+  if (Array.isArray(parsedLocalStorageData.messageList) === false) {
+    return emptyMessageList;
+  }
+  if (parsedLocalStorageData.hasOwnProperty("updateTime") === false) {
+    return emptyMessageList;
+  }
+  if (typeof parsedLocalStorageData.updateTime !== "string") {
+    return emptyMessageList;
+  }
+  // 【３】取得したデータのオブジェクトのmessageListプロパティに格納されている配列について、
+  // 配列中の各要素のプロパティが、Message型のプロパティと一致しない。
+  if (parsedLocalStorageData.messageList.length > 0) {
+    for (let message of parsedLocalStorageData.messageList) {
+      if (message.hasOwnProperty("name") === false) {
+        return emptyMessageList;
+      }
+      if (typeof message.name !== "string") {
+        return emptyMessageList;
+      }
+      if (message.hasOwnProperty("content") === false) {
+        return emptyMessageList;
+      }
+      if (typeof message.content !== "string") {
+        return emptyMessageList;
+      }
+      if (message.hasOwnProperty("date") === false) {
+        return emptyMessageList;
+      }
+      if (typeof message.date !== "string") {
+        return emptyMessageList;
+      }
+    }
+  }
+
+  // ローカルストレージから正しいデータ型のデータが取得できれば、変換したデータを返す。
+  return parsedLocalStorageData;
 }
 
 // 指定したメッセージリストのデータを、ローカルストレージに保存する。

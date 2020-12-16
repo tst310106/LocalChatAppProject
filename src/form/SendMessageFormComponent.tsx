@@ -3,7 +3,11 @@ import * as React from "react";
 import Store, { createSendMessageAction, Message } from "../store/Store";
 import * as styles from "./SendMessageForm.module.css";
 
-export default class SendMessageFormComponent extends React.Component<{}, Message> {
+export default class SendMessageFormComponent extends React.Component<{},Message> {
+
+  // 入力された全角文字が「変換中」の場合はfalse　「変換が完了している」場合はtrue
+  isComposing: boolean = false;
+
   constructor(props: {}) {
     super(props);
 
@@ -19,22 +23,70 @@ export default class SendMessageFormComponent extends React.Component<{}, Messag
     this.doChangeName = this.doChangeName.bind(this);
     this.doChangeContent = this.doChangeContent.bind(this);
     this.doSubmit = this.doSubmit.bind(this);
+    this.setCompositionStart = this.setCompositionStart.bind(this);
+    this.setCompositionEnd = this.setCompositionEnd.bind(this);
   }
 
-  // 名前フォームの入力値が変更された場合に、このコンポーネントのstateのname値を書き換える。
+  // 名前フォームの入力値が確定された場合に、入力値を文字数制限分だけ切り取った上で、state中のname値を書き換える。
   doChangeName(e: any) {
-    // 入力された値を、このコンポーネントのstate中に設定する。
-    this.setState({
-      name: e.target.value,
-    });
+
+    if (this.isComposing === false) { // 半角文字の入力時　及び　全角文字の変換完了時　に実施される処理
+
+      // 入力値について、文字数制限の10文字分だけを切り取る。
+      // for of を用いることで、サロゲートペアも1文字として処理できるようにする。
+      let i_char_count = 0;
+      let counted_name = "";
+      for (let c of e.target.value) {
+        counted_name = counted_name + c;
+        i_char_count++;
+        if (i_char_count >= 10) {
+          break;
+        }
+      }
+
+      // 切り取った文字を、このコンポーネントのstate中に設定する。
+      this.setState({
+        name: counted_name,
+      });
+
+    } else { // 全角文字の変換中　に実施される処理
+
+      // 既に入力されている文字　及び　変換中の文字　を、このコンポーネントのstate中に設定する。
+      this.setState({
+        name: e.target.value,
+      });
+    }
   }
 
-  // メッセージ内容フォームの入力値が変更された場合に、このコンポーネントのstateのcontent値を書き換える。
+  // メッセージ内容フォームの入力値が確定された場合に、入力値を文字数制限分だけ切り取った上で、state中のcontent値を書き換える。
   doChangeContent(e: any) {
-    // 入力された値を、このコンポーネントのstate中に設定する。
-    this.setState({
-      content: e.target.value,
-    });
+    
+    if (this.isComposing === false) { // 半角文字の入力時　及び　全角文字の変換完了時　に実施される処理
+
+      // 入力値について、文字数制限の255文字分だけを切り取る。
+      // for of を用いることで、サロゲートペアも1文字として処理できるようにする。
+      let i_char_count = 0;
+      let counted_content = "";
+      for (let c of e.target.value) {
+        counted_content = counted_content + c;
+        i_char_count++;
+        if (i_char_count >= 255) {
+          break;
+        }
+      }
+
+      // 切り取った文字を、このコンポーネントのstate中に設定する。
+      this.setState({
+        content: counted_content,
+      });
+
+    } else { // 全角文字の変換中　に実施される処理
+
+      // 既に入力されている文字　及び　変換中の文字　を、このコンポーネントのstate中に設定する。
+      this.setState({
+        content: e.target.value,
+      });
+    }
   }
 
   // フォームの内容が送信された場合に、メッセージリストに新しいメッセージを追加する。
@@ -66,6 +118,22 @@ export default class SendMessageFormComponent extends React.Component<{}, Messag
     });
   }
 
+  // 名前・メッセージ内容のフォームに全角文字が入力され、変換中の状態になった場合に、メンバ変数の値を変更する。
+  setCompositionStart(e: any) {
+    this.isComposing = true;
+  }
+
+  // 名前・メッセージ内容のフォームに入力された全角文字の変換が完了した場合に、メンバ変数の値を変更し、入力文字数のチェックを行う。
+  setCompositionEnd(e: any) {
+    this.isComposing = false;
+
+    if (e.target.id === "inputName") { // 名前のフォームで全角文字の変換が完了した場合
+      this.doChangeName(e);
+    } else { // メッセージ内容のフォームで全角文字の変換が完了した場合
+      this.doChangeContent(e);
+    }
+  }
+
   // フォームの表示のために、<div>～</div>の形で返却する。
   // 下記のようにフォームを配置する。
   // =========================================
@@ -93,8 +161,10 @@ export default class SendMessageFormComponent extends React.Component<{}, Messag
               className={styles.inputName}
               value={this.state.name}
               onChange={this.doChangeName}
-              maxLength={10}
               required
+              onCompositionStart={this.setCompositionStart}
+              onCompositionEnd={this.setCompositionEnd}
+              id="inputName"
             />
           </div>
           <div>
@@ -104,14 +174,12 @@ export default class SendMessageFormComponent extends React.Component<{}, Messag
               wrap="soft"
               value={this.state.content}
               onChange={this.doChangeContent}
-              maxLength={255}
               required
+              onCompositionStart={this.setCompositionStart}
+              onCompositionEnd={this.setCompositionEnd}
+              id="inputContent"
             ></textarea>
-            <input
-              className={styles.sendButton}
-              type="submit"
-              value="送信"
-            />
+            <input className={styles.sendButton} type="submit" value="送信" />
           </div>
         </form>
       </div>
